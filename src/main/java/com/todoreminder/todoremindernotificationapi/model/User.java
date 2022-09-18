@@ -1,5 +1,6 @@
 package com.todoreminder.todoremindernotificationapi.model;
 
+import com.todoreminder.todoremindernotificationapi.dto.response.UserDto;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -26,4 +27,8 @@ public class User {
     private Set<Todo> todos;
 
     private SlackCredentials slackCredentials;
+
+    public UserDto toDto() {
+        return UserDto.builder().name(name).email(email).username(username).build();
+    }
 }

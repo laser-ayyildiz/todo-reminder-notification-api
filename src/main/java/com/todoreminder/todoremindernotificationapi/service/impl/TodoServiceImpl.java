@@ -3,7 +3,7 @@ package com.todoreminder.todoremindernotificationapi.service.impl;
 import com.github.seratch.jslack.Slack;
 import com.github.seratch.jslack.api.webhook.Payload;
 import com.github.seratch.jslack.api.webhook.WebhookResponse;
-import com.todoreminder.todoremindernotificationapi.model.Todo;
+import com.todoreminder.todoremindernotificationapi.dto.request.TodoCreateDto;
 import com.todoreminder.todoremindernotificationapi.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +19,9 @@ public class TodoServiceImpl implements TodoService {
     private String slackUrl;
 
     @Override
-    public boolean create(Todo todo, String username) {
+    public boolean create(TodoCreateDto todo) {
         Payload payload = Payload.builder()
-                .text(todo.toSlackMessage(username))
+                .text(todo.toSlackMessage())
                 .build();
         WebhookResponse webhookResponse;
         try {

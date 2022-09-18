@@ -1,8 +1,8 @@
 package com.todoreminder.todoremindernotificationapi.service;
 
-import com.todoreminder.todoremindernotificationapi.model.Todo;
+import com.todoreminder.todoremindernotificationapi.dto.request.TodoCreateDto;
 
 public interface TodoService {
 
-    boolean create(Todo todo, String username);
+    boolean create(TodoCreateDto todo);
 }
