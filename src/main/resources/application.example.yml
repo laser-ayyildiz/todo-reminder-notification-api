@@ -1,2 +1,8 @@
 slack:
   webhook: write your app's WEBHOOK_URL here
+
+couchbase:
+  connection-string: couchbase://CB_HOST
+  username: CB_USER
+  password: CB_PASS
+  bucket-name: CB_BUCKET
