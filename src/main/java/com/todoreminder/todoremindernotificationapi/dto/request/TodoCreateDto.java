@@ -1,5 +1,6 @@
 package com.todoreminder.todoremindernotificationapi.dto.request;
 
+import com.todoreminder.todoremindernotificationapi.model.Todo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,13 +24,7 @@ public class TodoCreateDto {
 
     private String username;
 
-    public String toSlackMessage() {
-        return "*Hey!* Do you remember this *TODO*: :ghost:" + '\n' +
-                "*Do it!*: " + body + '\n' +
-                "   *Where?* " + '\n' +
-                "     *Project*: " + project + '\n' +
-                "     *File*: " + filePath + '\n' +
-                "     *Line*: " + line + '\n' +
-                "     <https://github.com/" + username + "/" + project + "/blob/main/" + filePath + "#L" + line + "|:technologist:Show me in GitHub>";
+    public Todo toModel() {
+        return Todo.builder().body(body).project(project).filePath(filePath).line(line).build();
     }
 }

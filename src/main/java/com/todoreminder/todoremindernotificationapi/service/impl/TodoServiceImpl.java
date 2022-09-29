@@ -1,37 +1,44 @@
 package com.todoreminder.todoremindernotificationapi.service.impl;
 
-import com.github.seratch.jslack.Slack;
-import com.github.seratch.jslack.api.webhook.Payload;
-import com.github.seratch.jslack.api.webhook.WebhookResponse;
 import com.todoreminder.todoremindernotificationapi.dto.request.TodoCreateDto;
+import com.todoreminder.todoremindernotificationapi.dto.response.TodoDto;
+import com.todoreminder.todoremindernotificationapi.exception.ServiceException;
+import com.todoreminder.todoremindernotificationapi.exception.UserError;
+import com.todoreminder.todoremindernotificationapi.model.Notification;
+import com.todoreminder.todoremindernotificationapi.model.Todo;
+import com.todoreminder.todoremindernotificationapi.model.User;
+import com.todoreminder.todoremindernotificationapi.repository.UserRepository;
+import com.todoreminder.todoremindernotificationapi.service.NotificationService;
 import com.todoreminder.todoremindernotificationapi.service.TodoService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class TodoServiceImpl implements TodoService {
 
-    @Value("${slack.webhook}")
-    private String slackUrl;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @Override
-    public boolean create(TodoCreateDto todo) {
-        Payload payload = Payload.builder()
-                .text(todo.toSlackMessage())
-                .build();
-        WebhookResponse webhookResponse;
-        try {
-            webhookResponse = Slack.getInstance().send(slackUrl, payload);
-            log.info("Message response: {}", webhookResponse.toString());
-        } catch (IOException e) {
-            log.error("Unexpected error on this webhook: {}", slackUrl);
-            return false;
+    public TodoDto create(TodoCreateDto todo) {
+        User user = userRepository.findById(todo.getUsername())
+                .orElseThrow(() -> new ServiceException(UserError.NOT_FOUND));
+        Set<Todo> todos = user.getTodos();
+        Todo newTodo = todo.toModel();
+        todos.add(newTodo);
+        Set<Notification> newNotifications = notificationService.notify(newTodo, user);
+        Set<Notification> notifications = newTodo.getNotifications();
+        if (notifications == null) {
+            newTodo.setNotifications(newNotifications);
+        } else {
+            notifications.addAll(newNotifications);
         }
-
-        return webhookResponse.getCode() == 200;
+        userRepository.save(user);
+        return newTodo.toDto();
     }
 }

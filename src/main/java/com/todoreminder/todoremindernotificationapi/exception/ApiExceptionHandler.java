@@ -18,7 +18,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice

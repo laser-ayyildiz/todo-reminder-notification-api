@@ -51,6 +51,9 @@ public class User {
     private SlackCredentials slackCredentials;
 
     @Field
+    private Set<NotificationPlatform> notifyWith;
+
+    @Field
     @LastModifiedDate
     private Date lastModification;
 
